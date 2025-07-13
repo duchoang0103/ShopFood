@@ -12,8 +12,6 @@ type detailRestaurantStore interface {
 		condition map[string]interface{},
 		moreKeys ...string,
 	) (*restaurantmodel.Restaurant, error)
-
-	Detail(context context.Context, id int) (*restaurantmodel.Restaurant, error)
 }
 type detailRestaurantBiz struct {
 	store detailRestaurantStore
@@ -34,10 +32,5 @@ func (biz *detailRestaurantBiz) DetailRestaurant(context context.Context, id int
 		return nil, common.ErrEntityDeleted(restaurantmodel.EntityName, nil)
 	}
 
-	result, err := biz.store.Detail(context, id)
-	if err != nil {
-		return nil, common.ErrEntityNotFound(restaurantmodel.EntityName, err)
-	}
-	return result, nil
-
+	return oldData, nil
 }
