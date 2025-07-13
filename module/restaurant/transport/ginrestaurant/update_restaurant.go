@@ -7,8 +7,6 @@ import (
 	restaurantmodel "shopfood/module/restaurant/model"
 	restaurantstorage "shopfood/module/restaurant/storage"
 
-	"strconv"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,7 +14,7 @@ func UpdateRestaurant(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		db := appCtx.GetMainDBConnection()
 
-		id, err := strconv.Atoi(c.Param("id"))
+		uid, err := common.FromBase58(c.Param("id"))
 
 		if err != nil {
 			panic(common.ErrInvalidRequest(err))
@@ -31,11 +29,11 @@ func UpdateRestaurant(appCtx appctx.AppContext) gin.HandlerFunc {
 		store := restaurantstorage.NewSQLStore(db)
 		biz := restaurantbiz.NewUpdateRestaurantBiz(store)
 
-		if err := biz.UpdateRestaurant(c.Request.Context(), &newData, id); err != nil {
+		if err := biz.UpdateRestaurant(c.Request.Context(), &newData, int(uid.GetLocalID())); err != nil {
 			panic(err)
 		}
 
-		c.JSON(201, common.OnlySuccessResponse(true))
+		c.JSON(201, common.SimpleSuccessResponse(true))
 	}
 
 }
