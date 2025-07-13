@@ -2,7 +2,7 @@ package restaurantbiz
 
 import (
 	"context"
-	"errors"
+	"shopfood/common"
 	restaurantmodel "shopfood/module/restaurant/model"
 )
 
@@ -31,15 +31,15 @@ func (biz *updateRestaurantBiz) UpdateRestaurant(context context.Context, newDat
 
 	checkData, err := biz.store.FindDataWithCondition(context, map[string]interface{}{"id": id})
 	if err != nil {
-		return err
+		return common.ErrEntityNotFound(restaurantmodel.EntityName, err)
 	}
 
 	if checkData.Status == 0 {
-		return errors.New("restaurant is deleted")
+		return common.ErrEntityDeleted(restaurantmodel.EntityName, nil)
 	}
 
 	if err := biz.store.Update(context, newData, id); err != nil {
-		return err
+		return common.ErrCannotUpdateEntity(restaurantmodel.EntityName, err)
 	}
 
 	return nil

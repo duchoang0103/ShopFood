@@ -17,7 +17,7 @@ func CreateRestaurant(appCtx appctx.AppContext) gin.HandlerFunc {
 		var newRestaurant restaurantmodel.RestaurantCreate
 
 		if err := c.ShouldBindJSON(&newRestaurant); err != nil {
-			panic(err)
+			panic(common.ErrInvalidRequest(err))
 		}
 
 		store := restaurantstorage.NewSQLStore(db)
