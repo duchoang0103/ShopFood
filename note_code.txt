@@ -1,0 +1,78 @@
+BUOI 1
+
+package main
+
+import (
+	"log"
+	"os"
+
+	// "shopfood/config"
+
+	"github.com/joho/godotenv"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+)
+
+type Restaurant struct {
+	Id   int     `json:"id" gorm:"column:id;"`
+	Name string  `json:"name" gorm:"column:name;"`
+	Addr *string `json:"Addr" gorm:"column:addr;"`
+}
+
+// func (Restaurant) TableName() string {
+// 	return "restaurants"
+// }
+
+func (Restaurant) TableName() string {
+	return "restaurants"
+}
+
+func main() {
+	// refer https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
+
+	/* 	config.LoadConfig("config.json")
+	   	dsn := config.AppConfig.MYSQL_STRING */
+
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	dsn := os.Getenv("MYSQL_STRING")
+	if dsn == "" {
+		log.Fatal("MYSQL_STRING environment variable is not set")
+	}
+
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	// newRestaurant := Restaurant{Name: "Pizzahut", Addr: "123 Main St."}
+	// if err := db.Create(&newRestaurant).Error; err != nil {
+	// 	log.Println(err)
+	// }
+	// log.Println("New id: ", newRestaurant.Id)
+
+	var myRestaurant Restaurant
+
+	if err := db.Where("id = ?", 3).First(&myRestaurant).Error; err != nil {
+		log.Println(err)
+	}
+	log.Println(myRestaurant)
+
+	updateAddr := ""
+	myRestaurantUpdate := Restaurant{Addr: &updateAddr}
+
+	if err := db.Where("id = ?", 1).Updates(&myRestaurantUpdate).Error; err != nil {
+		log.Println(err)
+	}
+
+	if err := db.Where("id = ?", 2).Delete(&Restaurant{}).Error; err != nil {
+		log.Println(err)
+	}
+}
+
+
+------------------------------------------------------------------------------------------------------------------------------
