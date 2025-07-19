@@ -28,6 +28,8 @@ func ListRestaurant(appCtx appctx.AppContext) gin.HandlerFunc {
 			panic(common.ErrInvalidRequest(err))
 		}
 
+		filter.Status = []int{1}
+
 		store := restaurantstorage.NewSQLStore(db)
 		biz := restaurantbiz.NewlistRestaurantBiz(store)
 
