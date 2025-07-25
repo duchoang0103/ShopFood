@@ -4,8 +4,10 @@ import (
 	"log"
 	"os"
 	"shopfood/component/appctx"
+	"shopfood/component/uploadprovider"
 	"shopfood/middleware"
 	"shopfood/module/restaurant/transport/ginrestaurant"
+	"shopfood/module/upload/transport/ginupload"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -35,6 +37,13 @@ func main() {
 		log.Fatal("MYSQL_STRING environment variable is not set")
 	}
 
+	s3BucketName := os.Getenv("S3BucketName")
+	s3Region := os.Getenv("S3Region")
+	s3APIKey := os.Getenv("S3APIKey")
+	s3SecretKey := os.Getenv("S3SecretKey")
+	s3Domain := os.Getenv("S3Domain")
+	secretKey := os.Getenv("SYSTEM_SECRET")
+
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	if err != nil {
@@ -43,13 +52,18 @@ func main() {
 
 	db = db.Debug()
 
-	appContext := appctx.NewAppContext(db)
+	s3Provioder := uploadprovider.NewS3Provider(s3BucketName, s3Region, s3APIKey, s3SecretKey, s3Domain)
+
+	appContext := appctx.NewAppContext(db, s3Provioder, secretKey)
 
 	r := gin.Default()
 
 	r.Use(middleware.Recover(appContext))
 
 	v1 := r.Group("/v1")
+
+	// API /upload file
+	v1.POST("/upload", ginupload.Upload(appContext))
 
 	restaurants := v1.Group("/restaurants")
 
