@@ -18,7 +18,7 @@ func (s *sqlStore) ListDataWithCondition(
 
 	if f := filter; f != nil {
 		if f.OwnerId > 0 {
-			db = db.Where("user_id = ?", f.OwnerId)
+			db = db.Where("owner_id = ?", f.OwnerId)
 		}
 
 		if len(f.Status) > 0 {
@@ -30,9 +30,9 @@ func (s *sqlStore) ListDataWithCondition(
 		return nil, common.ErrDB(err)
 	}
 
-	// for i := range moreKeys {
-	// 	db = db.Preload(moreKeys[i])
-	// }
+	for i := range moreKeys {
+		db = db.Preload(moreKeys[i])
+	}
 
 	if v := paging.FakeCursor; v != "" {
 		uid, err := common.FromBase58(v)

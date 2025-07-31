@@ -22,7 +22,7 @@ func DetailRestaurant(appCtx appctx.AppContext) gin.HandlerFunc {
 		store := restaurantstorage.NewSQLStore(db)
 		biz := restaurantbiz.NewDetailRestaurantBiz(store)
 
-		result, err := biz.DetailRestaurant(c.Request.Context(), int(uid.GetLocalID()))
+		result, err := biz.DetailRestaurant(c.Request.Context(), int(uid.GetLocalID()), "User")
 
 		if err != nil {
 			panic(err)

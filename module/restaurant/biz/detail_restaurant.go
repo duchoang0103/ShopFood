@@ -21,9 +21,9 @@ func NewDetailRestaurantBiz(store detailRestaurantStore) *detailRestaurantBiz {
 	return &detailRestaurantBiz{store: store}
 }
 
-func (biz *detailRestaurantBiz) DetailRestaurant(context context.Context, id int) (*restaurantmodel.Restaurant, error) {
+func (biz *detailRestaurantBiz) DetailRestaurant(context context.Context, id int, morekeys ...string) (*restaurantmodel.Restaurant, error) {
 
-	oldData, err := biz.store.FindDataWithCondition(context, map[string]interface{}{"id": id})
+	oldData, err := biz.store.FindDataWithCondition(context, map[string]interface{}{"id": id}, morekeys...)
 	if err != nil {
 		return nil, common.ErrEntityNotFound(restaurantmodel.EntityName, err)
 	}

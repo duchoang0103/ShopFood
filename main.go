@@ -74,7 +74,7 @@ func main() {
 	users.GET("/profile", middleware.RequiredAuth(appContext), ginuser.Profile(appContext))
 
 	// API /restaurants
-	restaurants := v1.Group("/restaurants")
+	restaurants := v1.Group("/restaurants", middleware.RequiredAuth(appContext))
 
 	restaurants.POST("", ginrestaurant.CreateRestaurant(appContext))
 	restaurants.DELETE("/:id", ginrestaurant.DeleteRestaurant(appContext))

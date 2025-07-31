@@ -44,6 +44,7 @@ func RequiredAuth(appCtx appctx.AppContext) func(c *gin.Context) {
 	tokenProvider := jwt.NewTokenJWTProvider(appCtx.SecretKey())
 
 	return func(c *gin.Context) {
+
 		token, err := extractTokenFromHeaderString(c.GetHeader("Authorization"))
 
 		if err != nil {

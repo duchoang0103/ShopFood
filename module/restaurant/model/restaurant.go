@@ -15,11 +15,13 @@ const EntityName = "Restaurant"
 
 type Restaurant struct {
 	common.SQLModel `json:",inline"`
-	Name            string         `json:"name" gorm:"column:name;"`
-	Addr            string         `json:"Addr" gorm:"column:addr;"`
-	Typer           RestaurantType `json:"type" gorm:"column:type;"`
-	Logo            *common.Image  `json:"logo" gorm:"column:logo;"`
-	Cover           *common.Images `json:"cover" gorm:"column:cover;"`
+	Name            string             `json:"name" gorm:"column:name;"`
+	Addr            string             `json:"Addr" gorm:"column:addr;"`
+	Typer           RestaurantType     `json:"type" gorm:"column:type;"`
+	Logo            *common.Image      `json:"logo" gorm:"column:logo;"`
+	Cover           *common.Images     `json:"cover" gorm:"column:cover;"`
+	OwnerId         int                `json:"-" gorm:"column:owner_id;"`
+	User            *common.SimpleUser `json:"user" gorm:"foreignKey:OwnerId;references:Id;preload:false;"`
 }
 
 func (Restaurant) TableName() string {
@@ -28,12 +30,17 @@ func (Restaurant) TableName() string {
 
 func (r *Restaurant) Mask(isAdminOwner bool) {
 	r.GenUID(common.DbTypeRestaurant)
+
+	if u := r.User; u != nil {
+		u.Mask(isAdminOwner)
+	}
 }
 
 type RestaurantCreate struct {
 	common.SQLModel `json:",inline"`
 	Name            string         `json:"name" gorm:"column:name;"`
 	Addr            *string        `json:"Addr" gorm:"column:addr;"`
+	OwnerId         int            `json:"-" gorm:"column:owner_id;"`
 	Logo            *common.Image  `json:"logo" gorm:"column:logo;"`
 	Cover           *common.Images `json:"cover" gorm:"column:cover;"`
 }

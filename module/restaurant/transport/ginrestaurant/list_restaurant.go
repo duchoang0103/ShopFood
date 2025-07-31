@@ -33,7 +33,7 @@ func ListRestaurant(appCtx appctx.AppContext) gin.HandlerFunc {
 		store := restaurantstorage.NewSQLStore(db)
 		biz := restaurantbiz.NewlistRestaurantBiz(store)
 
-		result, err := biz.ListRestaurant(c.Request.Context(), &filter, &pagingData)
+		result, err := biz.ListRestaurant(c.Request.Context(), &filter, &pagingData, "User")
 
 		if err != nil {
 			panic(err)

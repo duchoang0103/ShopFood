@@ -15,7 +15,13 @@ func (s *sqlStore) FindDataWithCondition(
 ) (*restaurantmodel.Restaurant, error) {
 	var data restaurantmodel.Restaurant
 
-	if err := s.db.Where(condition).First(&data).Error; err != nil {
+	db := s.db.Table(restaurantmodel.Restaurant{}.TableName())
+
+	for i := range moreKeys {
+		db = db.Preload(moreKeys[i])
+	}
+
+	if err := db.Where(condition).First(&data).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, common.RecordNotFound
 		}

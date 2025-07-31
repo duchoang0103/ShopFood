@@ -25,9 +25,9 @@ func NewlistRestaurantBiz(store listRestaurantStore) *listRestaurantBiz {
 func (biz *listRestaurantBiz) ListRestaurant(
 	context context.Context,
 	filter *restaurantmodel.Filter,
-	paging *common.Paging) ([]restaurantmodel.Restaurant, error) {
+	paging *common.Paging, morekeys ...string) ([]restaurantmodel.Restaurant, error) {
 
-	result, err := biz.store.ListDataWithCondition(context, filter, paging)
+	result, err := biz.store.ListDataWithCondition(context, filter, paging, morekeys...)
 
 	if err != nil {
 		return nil, common.ErrCannotListEntity(restaurantmodel.EntityName, err)
