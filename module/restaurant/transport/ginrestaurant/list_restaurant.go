@@ -5,7 +5,10 @@ import (
 	"shopfood/component/appctx"
 	restaurantbiz "shopfood/module/restaurant/biz"
 	restaurantmodel "shopfood/module/restaurant/model"
+	restaurantRepo "shopfood/module/restaurant/repository"
 	restaurantstorage "shopfood/module/restaurant/storage"
+
+	resurantLikeStore "shopfood/module/restaurantlike/store"
 
 	"github.com/gin-gonic/gin"
 )
@@ -31,7 +34,9 @@ func ListRestaurant(appCtx appctx.AppContext) gin.HandlerFunc {
 		filter.Status = []int{1}
 
 		store := restaurantstorage.NewSQLStore(db)
-		biz := restaurantbiz.NewlistRestaurantBiz(store)
+		likeStore := resurantLikeStore.NewSQLStore(db)
+		repo := restaurantRepo.NewlistRestaurantRepo(store, likeStore)
+		biz := restaurantbiz.NewlistRestaurantBiz(repo)
 
 		result, err := biz.ListRestaurant(c.Request.Context(), &filter, &pagingData, "User")
 
