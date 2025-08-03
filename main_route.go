@@ -31,8 +31,9 @@ func SetupRouter(appContext appctx.AppContext, v1 *gin.RouterGroup) {
 		restaurants.GET("", ginrestaurant.ListRestaurant(appContext))
 		restaurants.GET("/:id", ginrestaurant.DetailRestaurant(appContext))
 		restaurants.PATCH("/:id", ginrestaurant.UpdateRestaurant(appContext))
-		restaurants.POST("/:id/like", ginrstlike.UserLikeRestaurant(appContext))
-		restaurants.DELETE("/:id/dislike", ginrstlike.UserDislikeRestaurant(appContext))
+		restaurants.POST("/:id/liked_users", ginrstlike.UserLikeRestaurant(appContext))
+		restaurants.DELETE("/:id/liked_users", ginrstlike.UserDislikeRestaurant(appContext))
+		restaurants.GET("/:id/liked_users", ginrstlike.ListUser(appContext))
 	}
 
 }

@@ -5,6 +5,7 @@ import (
 	"shopfood/common"
 	"shopfood/component/appctx"
 	retlikebiz "shopfood/module/restaurantlike/biz"
+	restaurantlikemodel "shopfood/module/restaurantlike/model"
 	restaurantlikestorage "shopfood/module/restaurantlike/store"
 
 	"github.com/gin-gonic/gin"
@@ -19,11 +20,15 @@ func UserDislikeRestaurant(appCtx appctx.AppContext) gin.HandlerFunc {
 		}
 
 		requester := c.MustGet(common.CurrentUser).(common.Requester)
+		data := restaurantlikemodel.Like{
+			RestaurantId: int(uid.GetLocalID()),
+			UserId:       requester.GetUserId(),
+		}
 
 		store := restaurantlikestorage.NewSQLStore(appCtx.GetMainDBConnection())
 		biz := retlikebiz.NewUserDislikeRestaurantBiz(store)
 
-		if err := biz.DislikeRestaurant(c.Request.Context(), requester.GetUserId(), int(uid.GetLocalID())); err != nil {
+		if err := biz.DislikeRestaurant(c.Request.Context(), &data); err != nil {
 			panic(err)
 		}
 

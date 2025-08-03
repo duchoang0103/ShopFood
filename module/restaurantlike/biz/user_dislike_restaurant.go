@@ -3,11 +3,11 @@ package biz
 import (
 	"context"
 
-	restaurantLikemodel "shopfood/module/restaurantlike/model"
+	restaurantlikemodel "shopfood/module/restaurantlike/model"
 )
 
 type UserDislikeRestaurantStore interface {
-	Delete(ctx context.Context, userId, restaurantId int) error
+	Delete(ctx context.Context, data *restaurantlikemodel.Like) error
 }
 
 type userDislikeRestaurantBiz struct {
@@ -22,13 +22,12 @@ func NewUserDislikeRestaurantBiz(store UserDislikeRestaurantStore) *userDislikeR
 
 func (biz *userDislikeRestaurantBiz) DislikeRestaurant(
 	ctx context.Context,
-	userId,
-	restaurantId int,
+	data *restaurantlikemodel.Like,
 ) error {
-	err := biz.store.Delete(ctx, userId, restaurantId)
+	err := biz.store.Delete(ctx, data)
 
 	if err != nil {
-		return restaurantLikemodel.ErrCannotDislikeRestaurant(err)
+		return restaurantlikemodel.ErrCannotDislikeRestaurant(err)
 	}
 
 	return nil
