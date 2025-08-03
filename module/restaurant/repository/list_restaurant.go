@@ -28,7 +28,7 @@ func NewlistRestaurantRepo(store ListRestaurantStore, likeStore LikeRestaurantSt
 	return &listRestaurantRepo{store: store, likeStore: likeStore}
 }
 
-func (biz *listRestaurantRepo) ListRestaurant(
+func (biz *listRestaurantRepo) ListRestaurantRepo(
 	context context.Context,
 	filter *restaurantmodel.Filter,
 	paging *common.Paging, morekeys ...string) ([]restaurantmodel.Restaurant, error) {

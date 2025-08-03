@@ -7,7 +7,7 @@ import (
 )
 
 type ListRestaurantRepo interface {
-	ListRestaurant(
+	ListRestaurantRepo(
 		context context.Context,
 		filter *restaurantmodel.Filter,
 		paging *common.Paging, morekeys ...string) ([]restaurantmodel.Restaurant, error)
@@ -26,7 +26,7 @@ func (biz *listRestaurantBiz) ListRestaurant(
 	filter *restaurantmodel.Filter,
 	paging *common.Paging, morekeys ...string) ([]restaurantmodel.Restaurant, error) {
 
-	result, err := biz.repo.ListRestaurant(context, filter, paging, morekeys...)
+	result, err := biz.repo.ListRestaurantRepo(context, filter, paging, morekeys...)
 
 	if err != nil {
 		return nil, common.ErrCannotListEntity(restaurantmodel.EntityName, err)

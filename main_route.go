@@ -4,6 +4,7 @@ import (
 	"shopfood/component/appctx"
 	"shopfood/middleware"
 	"shopfood/module/restaurant/transport/ginrestaurant"
+	"shopfood/module/restaurantlike/transport/ginrstlike"
 	"shopfood/module/upload/transport/ginupload"
 	"shopfood/module/user/transport/ginuser"
 
@@ -30,6 +31,8 @@ func SetupRouter(appContext appctx.AppContext, v1 *gin.RouterGroup) {
 		restaurants.GET("", ginrestaurant.ListRestaurant(appContext))
 		restaurants.GET("/:id", ginrestaurant.DetailRestaurant(appContext))
 		restaurants.PATCH("/:id", ginrestaurant.UpdateRestaurant(appContext))
+		restaurants.POST("/:id/like", ginrstlike.UserLikeRestaurant(appContext))
+		restaurants.DELETE("/:id/dislike", ginrstlike.UserDislikeRestaurant(appContext))
 	}
 
 }
