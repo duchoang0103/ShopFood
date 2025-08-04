@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	restaurantstorage "shopfood/module/restaurant/storage"
 	rstlikebiz "shopfood/module/restaurantlike/biz"
 	restaurantlikemodel "shopfood/module/restaurantlike/model"
 	restaurantlikestorage "shopfood/module/restaurantlike/store"
@@ -27,7 +28,8 @@ func UserLikeRestaurant(appCtx appctx.AppContext) gin.HandlerFunc {
 		}
 
 		store := restaurantlikestorage.NewSQLStore(appCtx.GetMainDBConnection())
-		biz := rstlikebiz.NewUserLikeRestaurantBiz(store)
+		incStore := restaurantstorage.NewSQLStore(appCtx.GetMainDBConnection())
+		biz := rstlikebiz.NewUserLikeRestaurantBiz(store, incStore)
 
 		if err := biz.LikeRestaurant(c.Request.Context(), &data); err != nil {
 			c.JSON(http.StatusInternalServerError, common.ErrInternal(err))

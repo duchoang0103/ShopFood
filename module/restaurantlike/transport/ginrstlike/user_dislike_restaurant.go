@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"shopfood/common"
 	"shopfood/component/appctx"
+	restaurantstorage "shopfood/module/restaurant/storage"
 	retlikebiz "shopfood/module/restaurantlike/biz"
 	restaurantlikemodel "shopfood/module/restaurantlike/model"
 	restaurantlikestorage "shopfood/module/restaurantlike/store"
@@ -26,7 +27,8 @@ func UserDislikeRestaurant(appCtx appctx.AppContext) gin.HandlerFunc {
 		}
 
 		store := restaurantlikestorage.NewSQLStore(appCtx.GetMainDBConnection())
-		biz := retlikebiz.NewUserDislikeRestaurantBiz(store)
+		deStore := restaurantstorage.NewSQLStore(appCtx.GetMainDBConnection())
+		biz := retlikebiz.NewUserDislikeRestaurantBiz(store, deStore)
 
 		if err := biz.DislikeRestaurant(c.Request.Context(), &data); err != nil {
 			panic(err)
