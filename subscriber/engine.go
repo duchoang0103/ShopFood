@@ -3,6 +3,7 @@ package subscriber
 import (
 	"context"
 	"log"
+	"shopfood/common"
 	"shopfood/component/appctx"
 	"shopfood/component/asyncjob"
 	"shopfood/pubsub"
@@ -21,6 +22,21 @@ func NewEngine(appContext appctx.AppContext) *consumerEngine {
 	return &consumerEngine{appCtx: appContext}
 }
 
+func (engine *consumerEngine) Start() error {
+	engine.startSubTopic(common.TopicUserLikeRestaurant,
+		true,
+		IncreaseLikeCountAfterUserLikeRestaurant(engine.appCtx),
+		PushNotificationWhenUserLikeRestaurant(engine.appCtx),
+	)
+
+	engine.startSubTopic(common.TopicUserDisLikeRestaurant,
+		true,
+		DecreaseLikeCountAfterUserLikeRestaurant(engine.appCtx),
+	)
+
+	return nil
+}
+
 type GroupJob interface {
 	Run(ctx context.Context) error
 }
@@ -29,7 +45,7 @@ func (engine *consumerEngine) startSubTopic(topic pubsub.Topic, isConcurrent boo
 	c, _ := engine.appCtx.GetPubSub().Subscriber(context.Background(), topic)
 
 	for _, item := range consumerJobs {
-		log.Println("Setup consumer for:", item.Title)
+		log.Println("Setup subscriber for:", item.Title)
 	}
 
 	// hander asyncjob

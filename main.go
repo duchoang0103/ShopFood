@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"log"
 	"os"
 	"shopfood/component/appctx"
@@ -57,8 +56,9 @@ func main() {
 	ps := localpb.NewPubSub()
 	appContext := appctx.NewAppContext(db, s3Provioder, secretKey, ps)
 
-	// setup subscribers
-	subscriber.Setup(appContext, context.Background())
+	// // setup subscribers
+	// subscriber.Setup(appContext, context.Background())
+	_ = subscriber.NewEngine(appContext).Start()
 
 	r := gin.Default()
 
