@@ -2,30 +2,35 @@ package biz
 
 import (
 	"context"
+	"log"
 	"shopfood/common"
 	restaurantlikemodel "shopfood/module/restaurantlike/model"
+	"shopfood/pubsub"
 )
 
 type UserLikeRestaurantStore interface {
 	Create(ctx context.Context, data *restaurantlikemodel.Like) error
 }
 
-type IncLikedCountResStore interface {
-	IncreaseLikeCount(ctx context.Context, id int) error
-}
+// type IncLikedCountResStore interface {
+// 	IncreaseLikeCount(ctx context.Context, id int) error
+// }
 
 type userLikeRestaurantBiz struct {
-	store    UserLikeRestaurantStore
-	incStore IncLikedCountResStore
+	store UserLikeRestaurantStore
+	// incStore IncLikedCountResStore
+	ps pubsub.Pubsub
 }
 
 func NewUserLikeRestaurantBiz(
 	store UserLikeRestaurantStore,
-	incStore IncLikedCountResStore,
+	// incStore IncLikedCountResStore,
+	ps pubsub.Pubsub,
 ) *userLikeRestaurantBiz {
 	return &userLikeRestaurantBiz{
-		store:    store,
-		incStore: incStore,
+		store: store,
+		// incStore: incStore,
+		ps: ps,
 	}
 }
 
@@ -39,11 +44,19 @@ func (biz *userLikeRestaurantBiz) LikeRestaurant(
 		return restaurantlikemodel.ErrCannotLikeRestaurant(err)
 	}
 
-	go func() {
-		defer common.AppRecover()
+	//Send message
+	if err := biz.ps.Publish(ctx, common.TopicUserLikeRestaurant, pubsub.NewMessage(data)); err != nil {
+		log.Println(err)
+	}
 
-		biz.incStore.IncreaseLikeCount(ctx, data.RestaurantId) //Khong bat error o day tranh th api update bi block
-	}()
+	// //side effect ----- KHong can nua vi pubsub
+	// job := asyncjob.NewJob(func(ctx context.Context) error {
+	// 	return biz.incStore.IncreaseLikeCount(ctx, data.RestaurantId)
+	// })
+
+	// if err := asyncjob.NewGroup(true, job).Run(ctx); err != nil {
+	// 	log.Println(err) //Khong bat error o day tranh th api update bi block
+	// }
 
 	return nil
 }

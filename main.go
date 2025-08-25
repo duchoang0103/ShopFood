@@ -1,11 +1,14 @@
 package main
 
 import (
+	"context"
 	"log"
 	"os"
 	"shopfood/component/appctx"
 	"shopfood/component/uploadprovider"
 	"shopfood/middleware"
+	"shopfood/pubsub/localpb"
+	"shopfood/subscriber"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -51,8 +54,11 @@ func main() {
 	db = db.Debug()
 
 	s3Provioder := uploadprovider.NewS3Provider(s3BucketName, s3Region, s3APIKey, s3SecretKey, s3Domain)
+	ps := localpb.NewPubSub()
+	appContext := appctx.NewAppContext(db, s3Provioder, secretKey, ps)
 
-	appContext := appctx.NewAppContext(db, s3Provioder, secretKey)
+	// setup subscribers
+	subscriber.Setup(appContext, context.Background())
 
 	r := gin.Default()
 
